@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import config from 'config';
-import { CreateUserInput } from './user.schema';
+import { CreateUserInput, VerifyUserInput } from './user.schema';
 import sendEmail from '../../utils/mailer';
-import { createUser } from './user.service';
+import { createUser, findUserById } from './user.service';
 
 // Create New User Handler
 export async function createUserHandler(
@@ -31,4 +31,25 @@ export async function createUserHandler(
     }
     return res.status(500).send(e);
   }
+}
+// Verify User Account Handler
+export async function verifyUserHandler(
+  req: Request<VerifyUserInput>,
+  res: Response
+) {
+  const { id, verificationCode } = req.params;
+  const user = await findUserById(id);
+
+  if (!user) {
+    return res.send('Could not verify user');
+  }
+  if (user.verified) {
+    return res.send('User already verified');
+  }
+  if (user.verificationCode === verificationCode) {
+    user.verified = true;
+    await user.save();
+    return res.send('User successfully verified');
+  }
+  return res.send('Could not verify user');
 }

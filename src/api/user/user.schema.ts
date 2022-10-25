@@ -1,5 +1,15 @@
+import mongoose from 'mongoose';
 import { object, string, TypeOf } from 'zod';
 
+// IsValid Id func
+const IsValid = (id: string) => {
+  try {
+    const objId = new mongoose.Types.ObjectId(id).toString();
+    return objId === id;
+  } catch (e) {
+    return false;
+  }
+};
 // Create New User Schema
 export const createUserSchema = object({
   body: object({
@@ -23,6 +33,18 @@ export const createUserSchema = object({
     path: ['passwordConfirmation'],
   }),
 });
+// Verify User Account Schema
+export const verifyUserSchema = object({
+  params: object({
+    id: string(),
+    verificationCode: string(),
+  }).refine((data) => IsValid(data.id), {
+    message: 'Not Valid id',
+    path: ['id'],
+  }),
+});
 
 // Create New User Input Type
 export type CreateUserInput = TypeOf<typeof createUserSchema>['body'];
+// Verify User Account Input Type
+export type VerifyUserInput = TypeOf<typeof verifyUserSchema>['params'];
