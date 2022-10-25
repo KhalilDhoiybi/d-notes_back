@@ -1,30 +1,15 @@
-import express, { Response } from 'express';
-import config from 'config';
-import sendEmail from './utils/mailer';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import router from './api';
 
+// Initials
 const app = express();
+app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
-app.get('/healthcheck', (_, res: Response) => {
-  res.sendStatus(200);
-});
-
-app.get('/mailertest', async (_, res: Response) => {
-  try {
-    await sendEmail({
-      from: config.get('smtp.auth.user'),
-      to: 'khalildoiybi31@gmail.com',
-      subject: 'MailerTest',
-      text: `Your mailer is working perfectly`,
-      html: `
-      <h1>Mailer</h1>
-      <p>This is your email</p>
-    `,
-    });
-    return res.sendStatus(200);
-  } catch (e) {
-    return res.sendStatus(400);
-  }
-});
+// Router
+app.use('/api', router);
 
 export default app;
