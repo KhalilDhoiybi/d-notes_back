@@ -1,8 +1,13 @@
 import { Request, Response } from 'express';
 import config from 'config';
-import { CreateUserInput, VerifyUserInput } from './user.schema';
+import {
+  CreateUserInput,
+  ForgotPasswordInput,
+  VerifyUserInput,
+} from './user.schema';
 import sendEmail from '../../utils/mailer';
-import { createUser, findUserById } from './user.service';
+import { createUser, findUserByEmail, findUserById } from './user.service';
+import { nanoid } from 'nanoid';
 
 // Create New User Handler
 export async function createUserHandler(
@@ -16,12 +21,12 @@ export async function createUserHandler(
       from: config.get('smtp.auth.user'),
       to: user.email,
       subject: 'Please verify your account',
-      text: `Verification code: ${user.verificationCode} ID: ${user._id}`,
+      text: `ID: ${user._id} Verification code: ${user.verificationCode}`,
       html: `
-          <h1>Verification code:</h1>
-          <p>${user.verificationCode}</p>
           <h1>ID:</h1>
           <p>${user._id}</p>
+          <h1>Verification code:</h1>
+          <p>${user.verificationCode}</p>
         `,
     });
     return res.send('User successfully created');
@@ -52,4 +57,35 @@ export async function verifyUserHandler(
     return res.send('User successfully verified');
   }
   return res.send('Could not verify user');
+}
+// Forgot Password Handler
+export async function forgotPasswordHandler(
+  req: Request<{}, {}, ForgotPasswordInput>,
+  res: Response
+) {
+  const { email } = req.body;
+  const user = await findUserByEmail(email);
+  const message = 'If user registred will recieve password reset email';
+
+  if (!user) {
+    return res.send(message);
+  }
+  if (!user.verified) {
+    return res.send('User not verified');
+  }
+  user.passwordRestCode = nanoid();
+  await user.save();
+  await sendEmail({
+    from: config.get('smtp.auth.user'),
+    to: user.email,
+    subject: 'Password Reset Code',
+    text: `ID: ${user._id} Password reset code: ${user.passwordRestCode}`,
+    html: `
+        <h1>ID:</h1>
+        <p>${user._id}</p>
+        <h1>Password reset code:</h1>
+        <p>${user.passwordRestCode}</p>
+      `,
+  });
+  return res.send(message);
 }

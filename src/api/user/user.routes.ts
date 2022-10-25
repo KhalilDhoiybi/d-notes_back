@@ -1,7 +1,15 @@
 import express from 'express';
 import validateResource from '../../middleware/validateResource';
-import { createUserHandler, verifyUserHandler } from './user.controller';
-import { createUserSchema, verifyUserSchema } from './user.schema';
+import {
+  createUserHandler,
+  forgotPasswordHandler,
+  verifyUserHandler,
+} from './user.controller';
+import {
+  createUserSchema,
+  forgotPasswordSchema,
+  verifyUserSchema,
+} from './user.schema';
 
 const router = express.Router();
 
@@ -12,6 +20,12 @@ router.post(
   '/verify/:id/:verificationCode',
   validateResource(verifyUserSchema),
   verifyUserHandler
+);
+// Forgot Password Route
+router.post(
+  '/forgotpassword',
+  validateResource(forgotPasswordSchema),
+  forgotPasswordHandler
 );
 
 export default router;
