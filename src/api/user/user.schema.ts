@@ -51,6 +51,27 @@ export const forgotPasswordSchema = object({
     }).email('Not valid email'),
   }),
 });
+// Reset User Password Schema
+export const resetPasswordSchema = object({
+  params: object({
+    id: string(),
+    passwordRestCode: string(),
+  }).refine((data) => IsValid(data.id), {
+    message: 'Not Valid id',
+    path: ['id'],
+  }),
+  body: object({
+    password: string({
+      required_error: 'First Name is required',
+    }).min(6, 'Password is too short - should be at least 6 chars'),
+    passwordConfirmation: string({
+      required_error: 'Password confirmation is required',
+    }),
+  }).refine((data) => data.password === data.passwordConfirmation, {
+    message: 'Password not match',
+    path: ['passwordConfirmation'],
+  }),
+});
 
 // Create New User Input Type
 export type CreateUserInput = TypeOf<typeof createUserSchema>['body'];
@@ -58,3 +79,5 @@ export type CreateUserInput = TypeOf<typeof createUserSchema>['body'];
 export type VerifyUserInput = TypeOf<typeof verifyUserSchema>['params'];
 // Forgot Password Input Type
 export type ForgotPasswordInput = TypeOf<typeof forgotPasswordSchema>['body'];
+// Reset Password Input Type
+export type ResetPasswordInput = TypeOf<typeof resetPasswordSchema>;

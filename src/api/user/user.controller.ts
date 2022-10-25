@@ -3,6 +3,7 @@ import config from 'config';
 import {
   CreateUserInput,
   ForgotPasswordInput,
+  ResetPasswordInput,
   VerifyUserInput,
 } from './user.schema';
 import sendEmail from '../../utils/mailer';
@@ -88,4 +89,25 @@ export async function forgotPasswordHandler(
       `,
   });
   return res.send(message);
+}
+// Reset Password Handler
+export async function resetPasswordHandler(
+  req: Request<ResetPasswordInput['params'], {}, ResetPasswordInput['body']>,
+  res: Response
+) {
+  const { id, passwordRestCode } = req.params;
+  const { password } = req.body;
+  const user = await findUserById(id);
+
+  if (
+    !user ||
+    !user.passwordRestCode ||
+    user.passwordRestCode !== passwordRestCode
+  ) {
+    return res.status(400).send('Could not reset user password');
+  }
+  user.passwordRestCode = null;
+  user.password = password;
+  await user.save();
+  return res.send('Successfully update password');
 }
