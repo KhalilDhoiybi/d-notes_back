@@ -7,7 +7,8 @@ import log from './src/utils/logger';
 
 // Starting The Server..
 const port = config.get<number>('port');
+const origin = config.get<string>('corsOrigin');
 app.listen(port, async () => {
-  log.info(`Server is running on port http://localhost:${port}`);
+  log.info(`Server is running on port ${origin}:${port}`);
   await connect();
 });

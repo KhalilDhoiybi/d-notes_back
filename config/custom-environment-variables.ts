@@ -5,6 +5,7 @@ export default {
   refreshTokenPublicKey: 'REFRESH_PUBLIC_KEY',
   dbUri: 'DB_URI',
   port: 'PORT',
+  corsOrigin: 'CORS_ORIGIN',
   smtp: {
     auth: {
       user: 'OUTLOOK_USER',
