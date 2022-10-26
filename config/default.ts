@@ -3,10 +3,10 @@ export default {
   dbUri: 'mongodb://localhost:27017/d-notes',
   corsOrigin: 'http://localhost',
   logLevel: 'info',
-  accessTokenPrivateKey: 'changeme',
-  refreshTokenPrivateKey: 'changeme',
-  accessTokenPublicKey: 'changeme',
-  refreshTokenPublicKey: 'changeme',
+  accessTokenPrivateKey: '',
+  refreshTokenPrivateKey: '',
+  accessTokenPublicKey: '',
+  refreshTokenPublicKey: '',
   //   Outlook Smtp config
   smtp: {
     host: 'smtp-mail.outlook.com',

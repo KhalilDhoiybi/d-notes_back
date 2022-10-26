@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { signJwt, verifyJwt } from '../utils/jwt';
+import { reIssueAccessToken } from '../api/auth/auth.service';
+import { verifyJwt } from '../utils/jwt';
 
 const deserializeUser = async (
   req: Request,
@@ -17,27 +18,25 @@ const deserializeUser = async (
     return next();
   }
   // Expired But Valid Access Token
-  const { payload: refreshPayload } =
-    expired && refreshToken
-      ? verifyJwt(refreshToken, 'refreshTokenPublicKey')
-      : { payload: null };
-  if (!refreshPayload) {
+  if (expired && refreshToken) {
+    const newAccessToken = await reIssueAccessToken(refreshToken);
+    if (newAccessToken) {
+      res.cookie('accessToken', newAccessToken, {
+        maxAge: 900000, // 15mn
+        httpOnly: true,
+        domain: 'localhost',
+        path: '/',
+        sameSite: 'strict',
+        secure: false,
+      });
+    }
+    res.locals.user = verifyJwt(
+      newAccessToken as string,
+      'accessTokenPublicKey'
+    ).payload;
     return next();
   }
-  // Verify Session
-  // const session = getSession(refresh.sessionId); // TODO getSession service
 
-  // if (!session) {
-  //   return next();
-  // }
-  const session = { _id: 'testsessionid' };
-  const newAccessToken = signJwt(session, 'accessTokenPrivateKey', '15m');
-
-  res.cookie('accessToken', newAccessToken, {
-    maxAge: 900000, // 15 minutes
-    httpOnly: true,
-  });
-  res.locals.user = verifyJwt(newAccessToken, 'accessTokenPublicKey').payload;
   return next();
 };
 
