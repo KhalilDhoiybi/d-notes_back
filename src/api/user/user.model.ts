@@ -11,6 +11,14 @@ import { nanoid } from 'nanoid';
 import argon2 from 'argon2';
 import log from '../../utils/logger';
 
+// Private fields
+export const privateFields = [
+  'password',
+  'verificationCode',
+  'passwordRestCode',
+  'verified',
+  '__v',
+];
 // Pre-Save func to crypt password if modified
 @pre<User>('save', async function () {
   if (!this.isModified('password')) {
