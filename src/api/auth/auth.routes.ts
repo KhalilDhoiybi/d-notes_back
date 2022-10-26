@@ -1,6 +1,7 @@
 import express from 'express';
+import requireUser from '../../middleware/requireUser';
 import validateResource from '../../middleware/validateResource';
-import { createSessionHandler } from './auth.controller';
+import { createSessionHandler, deleteSessionHandler } from './auth.controller';
 import { createSessionSchema } from './auth.schema';
 
 const router = express.Router();
@@ -11,5 +12,7 @@ router.post(
   validateResource(createSessionSchema),
   createSessionHandler
 );
+// DeleteSession/Logout Route
+router.delete('/logout', requireUser, deleteSessionHandler);
 
 export default router;

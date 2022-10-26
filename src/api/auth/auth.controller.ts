@@ -4,7 +4,11 @@ import { omit } from 'lodash';
 import { privateFields } from '../user/user.model';
 import { findUserByEmail } from '../user/user.service';
 import { CreateSessionInput } from './auth.schema';
-import { signAccessToken, signRefreshToken } from './auth.service';
+import {
+  signAccessToken,
+  signRefreshToken,
+  updateSession,
+} from './auth.service';
 
 // CreateSession/Login Handler
 export async function createSessionHandler(
@@ -25,11 +29,12 @@ export async function createSessionHandler(
   if (!isValid) {
     return res.send(message);
   }
-  const accessToken = signAccessToken(user);
-  const refreshToken = await signRefreshToken(
+  const { refreshToken, sessionId } = await signRefreshToken(
     user._id,
     req.get('user-agent') || ''
   );
+  const accessToken = signAccessToken(user, sessionId);
+
   res.cookie('accessToken', accessToken, {
     maxAge: 900000, // 15mn
     httpOnly: true,
@@ -46,5 +51,30 @@ export async function createSessionHandler(
     sameSite: 'strict',
     secure: false,
   });
-  return res.send(omit(user.toJSON(), privateFields));
+  return res.send({
+    ...omit(user.toJSON(), privateFields),
+    session: sessionId,
+  });
+}
+// DeleteSession/Logout Handler
+export async function deleteSessionHandler(req: Request, res: Response) {
+  const sessionId = res.locals.user.session;
+  res.cookie('accessToken', '', {
+    maxAge: 0,
+    httpOnly: true,
+    domain: config.get<string>('domain'),
+    path: '/',
+    sameSite: 'strict',
+    secure: false,
+  });
+  res.cookie('refreshToken', '', {
+    maxAge: 0,
+    httpOnly: true,
+    domain: config.get<string>('domain'),
+    path: '/',
+    sameSite: 'strict',
+    secure: false,
+  });
+  await updateSession({ _id: sessionId }, { valid: false });
+  return res.sendStatus(200);
 }
