@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import config from 'config';
 import { omit } from 'lodash';
 import { privateFields } from '../user/user.model';
 import { findUserByEmail } from '../user/user.service';
@@ -32,7 +33,7 @@ export async function createSessionHandler(
   res.cookie('accessToken', accessToken, {
     maxAge: 900000, // 15mn
     httpOnly: true,
-    domain: 'localhost',
+    domain: config.get<string>('domain'),
     path: '/',
     sameSite: 'strict',
     secure: false,
@@ -40,7 +41,7 @@ export async function createSessionHandler(
   res.cookie('refreshToken', refreshToken, {
     maxAge: 3.154e10, // 1y
     httpOnly: true,
-    domain: 'localhost',
+    domain: config.get<string>('domain'),
     path: '/',
     sameSite: 'strict',
     secure: false,

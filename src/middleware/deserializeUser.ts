@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import config from 'config';
 import { reIssueAccessToken } from '../api/auth/auth.service';
 import { verifyJwt } from '../utils/jwt';
 
@@ -24,7 +25,7 @@ const deserializeUser = async (
       res.cookie('accessToken', newAccessToken, {
         maxAge: 900000, // 15mn
         httpOnly: true,
-        domain: 'localhost',
+        domain: config.get<string>('domain'),
         path: '/',
         sameSite: 'strict',
         secure: false,

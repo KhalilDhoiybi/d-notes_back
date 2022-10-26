@@ -6,6 +6,7 @@ export default {
   dbUri: 'DB_URI',
   port: 'PORT',
   corsOrigin: 'CORS_ORIGIN',
+  domain: 'DOMAIN',
   smtp: {
     auth: {
       user: 'OUTLOOK_USER',
