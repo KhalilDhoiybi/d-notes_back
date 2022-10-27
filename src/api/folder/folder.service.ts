@@ -8,3 +8,7 @@ export function createFolder(input: Partial<Folder>) {
 export function getFolders(userId: string) {
   return FolderModel.find({ user: userId });
 }
+// Find Folder By Id
+export function findFolderById(id: string) {
+  return FolderModel.findById(id);
+}
