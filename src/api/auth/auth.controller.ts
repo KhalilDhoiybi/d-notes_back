@@ -51,10 +51,7 @@ export async function createSessionHandler(
     sameSite: 'strict',
     secure: false,
   });
-  return res.send({
-    ...omit(user.toJSON(), privateFields),
-    session: sessionId,
-  });
+  return res.send(omit(user.toJSON(), privateFields));
 }
 // DeleteSession/Logout Handler
 export async function deleteSessionHandler(req: Request, res: Response) {
