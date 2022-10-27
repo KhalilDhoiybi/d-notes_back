@@ -18,8 +18,24 @@ export const deleteFolderSchema = object({
     path: ['id'],
   }),
 });
+// Update Folder Name
+export const updateFolderNameSchema = object({
+  params: object({
+    id: string(),
+  }).refine((data) => IsValid(data.id), {
+    message: 'Not Valid id',
+    path: ['id'],
+  }),
+  body: object({
+    folderName: string({
+      required_error: 'Folder name is required',
+    }),
+  }),
+});
 
 // Create Folder Input Type
 export type CreateFolderInput = TypeOf<typeof createFolderSchema>['body'];
 // Delete Folder Input Type
 export type DeleteFolderInput = TypeOf<typeof deleteFolderSchema>['params'];
+// Update Folder Name Input Type
+export type UpdateFolderNameInput = TypeOf<typeof updateFolderNameSchema>;

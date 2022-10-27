@@ -5,26 +5,38 @@ import {
   createFolderHandler,
   deleteFolderHandler,
   getFoldersHandler,
+  updateFolderNameHandler,
 } from './folder.controller';
-import { createFolderSchema, deleteFolderSchema } from './folder.schema';
+import {
+  createFolderSchema,
+  deleteFolderSchema,
+  updateFolderNameSchema,
+} from './folder.schema';
 
 const router = express.Router();
 
 // Create Folder Route
 router.post(
-  '/',
+  '/create',
   validateResource(createFolderSchema),
   requireUser,
   createFolderHandler
 );
-// Get all User Folders
-router.get('/', requireUser, getFoldersHandler);
+// Get all User Folders Route
+router.get('/all', requireUser, getFoldersHandler);
 // Delete Folder Route
 router.delete(
-  '/:id',
+  '/remove/:id',
   validateResource(deleteFolderSchema),
   requireUser,
   deleteFolderHandler
+);
+// Update Folder Name Route
+router.put(
+  '/update/:id',
+  validateResource(updateFolderNameSchema),
+  requireUser,
+  updateFolderNameHandler
 );
 
 export default router;

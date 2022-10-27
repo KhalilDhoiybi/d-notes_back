@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import { CreateFolderInput, DeleteFolderInput } from './folder.schema';
+import {
+  CreateFolderInput,
+  DeleteFolderInput,
+  UpdateFolderNameInput,
+} from './folder.schema';
 import { createFolder, findFolderById, getFolders } from './folder.service';
 
 // Create New Folder Handler
@@ -48,6 +52,34 @@ export async function deleteFolderHandler(
   try {
     await folder.remove();
     return res.send('Folder has been removed');
+  } catch (e) {
+    return res.status(500).send(e);
+  }
+}
+// Update Folder Name Handler
+export async function updateFolderNameHandler(
+  req: Request<
+    UpdateFolderNameInput['params'],
+    {},
+    UpdateFolderNameInput['body']
+  >,
+  res: Response
+) {
+  const { id } = req.params;
+  const { folderName } = req.body;
+  const userId = res.locals.user._id;
+  const folder = await findFolderById(id);
+
+  if (!folder) {
+    return res.status(404).send('Folder not found');
+  }
+  if (userId !== String(folder.user)) {
+    return res.sendStatus(403);
+  }
+  try {
+    folder.folderName = folderName;
+    await folder.save();
+    return res.send('Folder name has been updated');
   } catch (e) {
     return res.status(500).send(e);
   }
