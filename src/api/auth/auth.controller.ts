@@ -36,7 +36,7 @@ export async function createSessionHandler(
   const accessToken = signAccessToken(user, sessionId);
 
   res.cookie('accessToken', accessToken, {
-    maxAge: 900000, // 15mn
+    maxAge: 604800000, // 7d
     httpOnly: true,
     domain: config.get<string>('domain'),
     path: '/',

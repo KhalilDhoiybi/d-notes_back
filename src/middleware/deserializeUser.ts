@@ -23,7 +23,7 @@ const deserializeUser = async (
     const newAccessToken = await reIssueAccessToken(refreshToken);
     if (newAccessToken) {
       res.cookie('accessToken', newAccessToken, {
-        maxAge: 900000, // 15mn
+        maxAge: 604800000, // 7d
         httpOnly: true,
         domain: config.get<string>('domain'),
         path: '/',
