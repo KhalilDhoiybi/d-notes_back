@@ -1,8 +1,10 @@
 import express from 'express';
+import requireUser from '../../middleware/requireUser';
 import validateResource from '../../middleware/validateResource';
 import {
   createUserHandler,
   forgotPasswordHandler,
+  getMeHandler,
   resetPasswordHandler,
   verifyUserHandler,
 } from './user.controller';
@@ -35,5 +37,7 @@ router.post(
   validateResource(resetPasswordSchema),
   resetPasswordHandler
 );
+// Get Me Route
+router.get('/me', requireUser, getMeHandler);
 
 export default router;

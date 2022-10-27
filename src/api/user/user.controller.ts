@@ -111,3 +111,6 @@ export async function resetPasswordHandler(
   await user.save();
   return res.send('Successfully update password');
 }
+export async function getMeHandler(req: Request, res: Response) {
+  return res.send(res.locals.user);
+}
