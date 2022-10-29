@@ -26,14 +26,14 @@ router.post(
 router.get('/all', requireUser, getFoldersHandler);
 // Delete Folder Route
 router.delete(
-  '/remove/:id',
+  '/remove/:folderId',
   validateResource(deleteFolderSchema),
   requireUser,
   deleteFolderHandler
 );
 // Update Folder Name Route
 router.put(
-  '/update/:id',
+  '/update/:folderId',
   validateResource(updateFolderNameSchema),
   requireUser,
   updateFolderNameHandler

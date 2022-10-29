@@ -12,3 +12,7 @@ export function getNotes(folder: string) {
 export function findNoteById(id: string) {
   return NoteModel.findById(id);
 }
+// Delete Many Notes By Folder
+export function deleteNotesByFolder(folder: string) {
+  return NoteModel.deleteMany({ folder });
+}

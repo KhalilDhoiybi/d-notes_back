@@ -12,8 +12,8 @@ export const createFolderSchema = object({
 // Delete Folder Schema
 export const deleteFolderSchema = object({
   params: object({
-    id: string(),
-  }).refine((data) => IsValid(data.id), {
+    folderId: string(),
+  }).refine((data) => IsValid(data.folderId), {
     message: 'Not Valid id',
     path: ['id'],
   }),
@@ -21,8 +21,8 @@ export const deleteFolderSchema = object({
 // Update Folder Name
 export const updateFolderNameSchema = object({
   params: object({
-    id: string(),
-  }).refine((data) => IsValid(data.id), {
+    folderId: string(),
+  }).refine((data) => IsValid(data.folderId), {
     message: 'Not Valid id',
     path: ['id'],
   }),

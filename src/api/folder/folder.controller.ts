@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { deleteNotesByFolder } from '../note/note.service';
 import {
   CreateFolderInput,
   DeleteFolderInput,
@@ -40,8 +41,8 @@ export async function deleteFolderHandler(
   res: Response
 ) {
   const userId = res.locals.user._id;
-  const { id } = req.params;
-  const folder = await findFolderById(id);
+  const { folderId } = req.params;
+  const folder = await findFolderById(folderId);
 
   if (!folder) {
     return res.status(404).send('Folder not found');
@@ -50,6 +51,7 @@ export async function deleteFolderHandler(
     return res.sendStatus(403);
   }
   try {
+    await deleteNotesByFolder(String(folderId));
     await folder.remove();
     return res.send('Folder has been removed');
   } catch (e) {
@@ -65,10 +67,10 @@ export async function updateFolderNameHandler(
   >,
   res: Response
 ) {
-  const { id } = req.params;
+  const { folderId } = req.params;
   const { folderName } = req.body;
   const userId = res.locals.user._id;
-  const folder = await findFolderById(id);
+  const folder = await findFolderById(folderId);
 
   if (!folder) {
     return res.status(404).send('Folder not found');
