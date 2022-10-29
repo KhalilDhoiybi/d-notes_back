@@ -18,6 +18,17 @@ export const createNoteSchema = object({
     }),
   }),
 });
+// Get Notes Schema
+export const getNotesSchema = object({
+  params: object({
+    folderId: string(),
+  }).refine((data) => IsValid(data.folderId), {
+    message: 'Not Valid folder id',
+    path: ['folderId'],
+  }),
+});
 
 // Create Note Input Type
 export type CreateNoteInput = TypeOf<typeof createNoteSchema>;
+// Get Notes Input Type
+export type GetNotesInput = TypeOf<typeof getNotesSchema>['params'];
