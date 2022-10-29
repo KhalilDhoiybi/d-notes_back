@@ -8,3 +8,7 @@ export function createNote(input: Partial<Note>) {
 export function getNotes(folder: string) {
   return NoteModel.find({ folder });
 }
+// Find Note By Id
+export function findNoteById(id: string) {
+  return NoteModel.findById(id);
+}

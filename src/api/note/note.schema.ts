@@ -27,8 +27,19 @@ export const getNotesSchema = object({
     path: ['folderId'],
   }),
 });
+// Delete Note Schema
+export const deleteNoteSchema = object({
+  params: object({
+    noteId: string(),
+  }).refine((data) => IsValid(data.noteId), {
+    message: 'Not Valid folder id',
+    path: ['folderId'],
+  }),
+});
 
 // Create Note Input Type
 export type CreateNoteInput = TypeOf<typeof createNoteSchema>;
 // Get Notes Input Type
 export type GetNotesInput = TypeOf<typeof getNotesSchema>['params'];
+// Delete Note Input Type
+export type DeleteNoteInput = TypeOf<typeof deleteNoteSchema>['params'];

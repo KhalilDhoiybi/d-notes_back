@@ -1,8 +1,16 @@
 import express from 'express';
 import requireUser from '../../middleware/requireUser';
 import validateResource from '../../middleware/validateResource';
-import { createNoteHandler, getNotesHandler } from './note.controller';
-import { createNoteSchema, getNotesSchema } from './note.schema';
+import {
+  createNoteHandler,
+  deleteNoteHandler,
+  getNotesHandler,
+} from './note.controller';
+import {
+  createNoteSchema,
+  deleteNoteSchema,
+  getNotesSchema,
+} from './note.schema';
 
 const router = express.Router();
 
@@ -19,6 +27,13 @@ router.get(
   validateResource(getNotesSchema),
   requireUser,
   getNotesHandler
+);
+// Delete Note Route
+router.delete(
+  '/remove/:noteId',
+  validateResource(deleteNoteSchema),
+  requireUser,
+  deleteNoteHandler
 );
 
 export default router;
