@@ -4,8 +4,7 @@ import {
   CreateNoteInput,
   DeleteNoteInput,
   GetNotesInput,
-  UpdateNoteContentInput,
-  UpdateNoteTitleInput,
+  UpdateNoteInput,
 } from './note.schema';
 import { createNote, findNoteById, getNotes } from './note.service';
 
@@ -82,17 +81,13 @@ export async function deleteNoteHandler(
     return res.status(500).send(e);
   }
 }
-// Update Note Tile Hnadler
-export async function updateNoteTitleHandler(
-  req: Request<
-    UpdateNoteTitleInput['params'],
-    {},
-    UpdateNoteTitleInput['body']
-  >,
+// Update Note Handler
+export async function updateNoteHandler(
+  req: Request<UpdateNoteInput['params'], {}, UpdateNoteInput['body']>,
   res: Response
 ) {
   const { noteId } = req.params;
-  const { noteTitle } = req.body;
+  const { noteTitle, noteContent } = req.body;
   const userId = res.locals.user._id;
   const note = await findNoteById(noteId);
 
@@ -103,37 +98,14 @@ export async function updateNoteTitleHandler(
     return res.sendStatus(403);
   }
   try {
-    note.noteTitle = noteTitle;
+    if (noteTitle) {
+      note.noteTitle = noteTitle;
+    }
+    if (noteContent) {
+      note.noteContent = noteContent;
+    }
     await note.save();
-    return res.send('Note title has been updated');
-  } catch (e) {
-    return res.status(500).send(e);
-  }
-}
-// Update Note Tile Hnadler
-export async function updateNoteContentHandler(
-  req: Request<
-    UpdateNoteContentInput['params'],
-    {},
-    UpdateNoteContentInput['body']
-  >,
-  res: Response
-) {
-  const { noteId } = req.params;
-  const { noteContent } = req.body;
-  const userId = res.locals.user._id;
-  const note = await findNoteById(noteId);
-
-  if (!note) {
-    return res.status(404).send('Note not found');
-  }
-  if (userId !== String(note.user)) {
-    return res.sendStatus(403);
-  }
-  try {
-    note.noteContent = noteContent;
-    await note.save();
-    return res.send('Note content has been updated');
+    return res.send('Note has been updated');
   } catch (e) {
     return res.status(500).send(e);
   }

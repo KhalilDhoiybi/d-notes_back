@@ -5,15 +5,13 @@ import {
   createNoteHandler,
   deleteNoteHandler,
   getNotesHandler,
-  updateNoteContentHandler,
-  updateNoteTitleHandler,
+  updateNoteHandler,
 } from './note.controller';
 import {
   createNoteSchema,
   deleteNoteSchema,
   getNotesSchema,
-  updateNoteContentSchema,
-  updateNoteTitleSchema,
+  updateNoteSchema,
 } from './note.schema';
 
 const router = express.Router();
@@ -39,19 +37,12 @@ router.delete(
   requireUser,
   deleteNoteHandler
 );
-// Update Note Title Route
-router.put(
-  '/update/title/:noteId',
-  validateResource(updateNoteTitleSchema),
-  requireUser,
-  updateNoteTitleHandler
-);
 // Update Note Content Route
 router.put(
-  '/update/content/:noteId',
-  validateResource(updateNoteContentSchema),
+  '/update/:noteId',
+  validateResource(updateNoteSchema),
   requireUser,
-  updateNoteContentHandler
+  updateNoteHandler
 );
 
 export default router;
