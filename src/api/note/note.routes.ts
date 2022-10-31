@@ -5,12 +5,14 @@ import {
   createNoteHandler,
   deleteNoteHandler,
   getNotesHandler,
+  updateNoteContentHandler,
   updateNoteTitleHandler,
 } from './note.controller';
 import {
   createNoteSchema,
   deleteNoteSchema,
   getNotesSchema,
+  updateNoteContentSchema,
   updateNoteTitleSchema,
 } from './note.schema';
 
@@ -43,6 +45,13 @@ router.put(
   validateResource(updateNoteTitleSchema),
   requireUser,
   updateNoteTitleHandler
+);
+// Update Note Content Route
+router.put(
+  '/update/content/:noteId',
+  validateResource(updateNoteContentSchema),
+  requireUser,
+  updateNoteContentHandler
 );
 
 export default router;

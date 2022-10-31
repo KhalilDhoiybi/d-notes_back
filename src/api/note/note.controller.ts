@@ -4,6 +4,7 @@ import {
   CreateNoteInput,
   DeleteNoteInput,
   GetNotesInput,
+  UpdateNoteContentInput,
   UpdateNoteTitleInput,
 } from './note.schema';
 import { createNote, findNoteById, getNotes } from './note.service';
@@ -105,6 +106,34 @@ export async function updateNoteTitleHandler(
     note.noteTitle = noteTitle;
     await note.save();
     return res.send('Note title has been updated');
+  } catch (e) {
+    return res.status(500).send(e);
+  }
+}
+// Update Note Tile Hnadler
+export async function updateNoteContentHandler(
+  req: Request<
+    UpdateNoteContentInput['params'],
+    {},
+    UpdateNoteContentInput['body']
+  >,
+  res: Response
+) {
+  const { noteId } = req.params;
+  const { noteContent } = req.body;
+  const userId = res.locals.user._id;
+  const note = await findNoteById(noteId);
+
+  if (!note) {
+    return res.status(404).send('Note not found');
+  }
+  if (userId !== String(note.user)) {
+    return res.sendStatus(403);
+  }
+  try {
+    note.noteContent = noteContent;
+    await note.save();
+    return res.send('Note content has been updated');
   } catch (e) {
     return res.status(500).send(e);
   }

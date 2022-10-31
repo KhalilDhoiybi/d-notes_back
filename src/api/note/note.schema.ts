@@ -36,18 +36,31 @@ export const deleteNoteSchema = object({
     path: ['folderId'],
   }),
 });
-
 // Update Note Title Schema
 export const updateNoteTitleSchema = object({
   params: object({
     noteId: string(),
   }).refine((data) => IsValid(data.noteId), {
-    message: 'Not Valid folder id',
+    message: 'Not Valid note id',
     path: ['folderId'],
   }),
   body: object({
     noteTitle: string({
       required_error: 'New title is required',
+    }),
+  }),
+});
+// Update Note Title Schema
+export const updateNoteContentSchema = object({
+  params: object({
+    noteId: string(),
+  }).refine((data) => IsValid(data.noteId), {
+    message: 'Not Valid note id',
+    path: ['folderId'],
+  }),
+  body: object({
+    noteContent: string({
+      required_error: 'New content is required',
     }),
   }),
 });
@@ -60,3 +73,5 @@ export type GetNotesInput = TypeOf<typeof getNotesSchema>['params'];
 export type DeleteNoteInput = TypeOf<typeof deleteNoteSchema>['params'];
 // Update Note Title Input Type
 export type UpdateNoteTitleInput = TypeOf<typeof updateNoteTitleSchema>;
+// Update Note Content Input Type
+export type UpdateNoteContentInput = TypeOf<typeof updateNoteContentSchema>;
