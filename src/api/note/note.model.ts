@@ -5,6 +5,7 @@ import {
   Ref,
 } from '@typegoose/typegoose';
 import { Folder } from '../folder/folder.model';
+import { User } from '../user/user.model';
 
 @modelOptions({
   schemaOptions: {
@@ -14,6 +15,9 @@ import { Folder } from '../folder/folder.model';
 export class Note {
   @prop({ ref: () => Folder })
   folder: Ref<Folder>;
+
+  @prop({ ref: () => User })
+  user: Ref<User>;
 
   @prop({ required: true })
   noteTitle: string;

@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import { findFolderById } from '../folder/folder.service';
-import { CreateNoteInput, DeleteNoteInput, GetNotesInput } from './note.schema';
+import {
+  CreateNoteInput,
+  DeleteNoteInput,
+  GetNotesInput,
+  UpdateNoteTitleInput,
+} from './note.schema';
 import { createNote, findNoteById, getNotes } from './note.service';
 
 // Create Note Handler
@@ -22,6 +27,7 @@ export async function createNoteHandler(
   try {
     const note = await createNote({
       folder: folder._id,
+      user: userId,
       noteTitle,
       noteContent,
     });
@@ -60,13 +66,45 @@ export async function deleteNoteHandler(
 ) {
   const { noteId } = req.params;
   const note = await findNoteById(noteId);
+  const userId = res.locals.user._id;
 
   if (!note) {
     return res.status(404).send('Note not found');
   }
+  if (userId !== String(note.user)) {
+    return res.sendStatus(403);
+  }
   try {
     await note.remove();
     return res.send('Note has been removed');
+  } catch (e) {
+    return res.status(500).send(e);
+  }
+}
+// Update Note Tile Hnadler
+export async function updateNoteTitleHandler(
+  req: Request<
+    UpdateNoteTitleInput['params'],
+    {},
+    UpdateNoteTitleInput['body']
+  >,
+  res: Response
+) {
+  const { noteId } = req.params;
+  const { noteTitle } = req.body;
+  const userId = res.locals.user._id;
+  const note = await findNoteById(noteId);
+
+  if (!note) {
+    return res.status(404).send('Note not found');
+  }
+  if (userId !== String(note.user)) {
+    return res.sendStatus(403);
+  }
+  try {
+    note.noteTitle = noteTitle;
+    await note.save();
+    return res.send('Note title has been updated');
   } catch (e) {
     return res.status(500).send(e);
   }
